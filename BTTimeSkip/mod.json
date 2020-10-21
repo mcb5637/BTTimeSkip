@@ -1,0 +1,18 @@
+﻿{
+  "Name": "BTTimeSkip",
+  "Enabled": true,
+
+  "Description": "",
+  "Author": "mcb",
+  "Website": "https://github.com/mcb5637/BTTimeSkip",
+  "Version": "0.3.0",
+
+  "OptionallyDependsOn": [ "Timeline" ],
+
+  "DLL": "BTTimeSkip.dll",
+
+  "Settings": {
+    "SkipTo": [ "3030-1-1", "3040-1-1", "3050-1-1" ],
+    "SkipBy": [ 1, 2, 5, 10, 15, 20 ]
+  }
+}

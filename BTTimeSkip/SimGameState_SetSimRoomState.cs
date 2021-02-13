@@ -53,11 +53,11 @@ namespace BTTimeSkip
             {
                 if (!state.CanAdvance())
                 {
-                    GenericPopupBuilder.Create("Skip Time?", "Currently impossible!\nYou have to be in a stable orbit and nothing to working on.").AddButton("Cancel", NewClose, true, null)
+                    GenericPopupBuilder.Create("Skip Time?", "Currently impossible!\nYou have to be in a stable orbit and nothing to work on.").AddButton("Cancel", NewClose, true, null)
                         .AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).Render();
                     return;
                 }
-                GenericPopupBuilder pop = GenericPopupBuilder.Create("Skip Time?", "Skip To a predefined year, skip By an amount of years, or skip to a Custom date?");
+                GenericPopupBuilder pop = GenericPopupBuilder.Create("Skip Time?", "Skip To a predefined year, skip By an amount of years, or skip to a Custom date?\nSkipping time can take a moment.");
                 pop.AddButton("Cancel", NewClose, true, null);
                 pop.AddButton("Skip To", RenderTo, true, null);
                 pop.AddButton("Skip By", RenderBy, true, null);

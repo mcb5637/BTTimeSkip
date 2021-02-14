@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Timeline.Features;
 using Timeline.Resources;
 
-[assembly:AssemblyVersion("0.3.0")]
+[assembly:AssemblyVersion("0.4.0")]
 
 namespace BTTimeSkip
 {

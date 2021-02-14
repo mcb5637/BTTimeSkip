@@ -57,7 +57,7 @@ namespace BTTimeSkip
                         .AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).Render();
                     return;
                 }
-                GenericPopupBuilder pop = GenericPopupBuilder.Create("Skip Time?", "Skip To a predefined year, skip By an amount of years, or skip to a Custom date?\nSkipping time can take a moment.");
+                GenericPopupBuilder pop = GenericPopupBuilder.Create("Skip Time?", "Skip To a predefined year, skip By an amount of years, or skip to a Custom date?");
                 pop.AddButton("Cancel", NewClose, true, null);
                 pop.AddButton("Skip To", RenderTo, true, null);
                 pop.AddButton("Skip By", RenderBy, true, null);
@@ -74,7 +74,7 @@ namespace BTTimeSkip
                 {
                     DateTime t2 = DateTime.Parse(t);
                     if (state.GetDayDiff(t2) > 0)
-                        pop.AddButton(t, delegate { state.AdvanceTo(t2); NewClose(); }, true, null);
+                        pop.AddButton(t, delegate { RenderSkip(t2); }, true, null);
                 }
                 pop.AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true);
                 pop.Render();
@@ -87,7 +87,7 @@ namespace BTTimeSkip
                 foreach (int t in BTTimeSkip_Main.Settings.SkipBy)
                 {
                     DateTime t2 = state.CurrentDate.AddYears(t);
-                    pop.AddButton(t.ToString(), delegate { state.AdvanceTo(t2); NewClose(); }, true, null);
+                    pop.AddButton(t.ToString(), delegate { RenderSkip(t2); }, true, null);
                 }
                 pop.AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true);
                 pop.Render();
@@ -100,8 +100,7 @@ namespace BTTimeSkip
                 pop.AddInput("Date", (str) => { 
                     if (DateTime.TryParse(str, out DateTime t) && state.GetDayDiff(t) > 0)
                     {
-                        state.AdvanceTo(t);
-                        NewClose();
+                        RenderSkip(t);
                     }
                     else
                     {
@@ -109,6 +108,16 @@ namespace BTTimeSkip
                         .AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true).Render();
                     }
                 }, "3030-1-1", false, false);
+                pop.AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true);
+                pop.Render();
+            }
+
+            public void RenderSkip(DateTime t)
+            {
+                GenericPopupBuilder pop = GenericPopupBuilder.Create("Skip Time?", $"Skip to: {t:D}?\nSkipping time can take a moment.");
+                pop.AddButton("Cancel", NewClose, true, null);
+                pop.AddButton("Skip and collect News", delegate { state.AdvanceTo(t, false); NewClose(); }, true, null);
+                pop.AddButton("Skip and block News", delegate { state.AdvanceTo(t, true); NewClose(); }, true, null);
                 pop.AddFader(new UIColorRef?(LazySingletonBehavior<UIManager>.Instance.UILookAndColorConstants.PopupBackfill), 0f, true);
                 pop.Render();
             }

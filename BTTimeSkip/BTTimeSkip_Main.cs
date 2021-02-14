@@ -9,6 +9,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Timeline.Features;
+using Timeline.Resources;
 
 [assembly:AssemblyVersion("0.3.0")]
 
@@ -31,13 +33,7 @@ namespace BTTimeSkip
             }
             HarmonyInstance harmony = HarmonyInstance.Create("com.github.mcb5637.BTTimeSkip");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                if (a.GetName().Name.Equals("Timeline"))
-                {
-                    SGEventPanel_SetEvent.ApplyPatch(harmony);
-                }
-            }
+            SGEventPanel_SetEvent.ApplyPatch(harmony);
         }
 
         public static bool CanAdvance(this SimGameState s)
@@ -49,7 +45,7 @@ namespace BTTimeSkip
             return true;
         }
 
-        public static void AdvanceBy(this SimGameState s, int days)
+        public static void AdvanceBy(this SimGameState s, int days, bool skipNews)
         {
             if (days <= 0)
             {
@@ -64,7 +60,11 @@ namespace BTTimeSkip
             //s.Constants.CareerMode.GameLength += days; // not saved/loaded
             object[] para = new object[] { days };
             Traverse.Create(s).Property("DayRemainingInQuarter").SetValue(s.DayRemainingInQuarter + qpassed * s.Constants.Finances.QuarterLength);
+            List<ForcedTimelineEvent> ev = ForcedEvents.ForcedTimelineEvents;
+            if (skipNews)
+                ForcedEvents.ForcedTimelineEvents = new List<ForcedTimelineEvent>();
             Traverse.Create(s).Method("OnDayPassed", para).GetValue(para);
+            ForcedEvents.ForcedTimelineEvents = ev;
             s.RoomManager.RefreshCareerCountdown();
             s.RoomManager.RemoveWorkQueueEntry(s.FinancialReportNotification, false);
             Traverse.Create(s).Property("FinancialReportNotification").SetValue(new WorkOrderEntry_Notification(WorkOrderType.FinancialReport, "Financial Report", "Financial Report", ""));
@@ -73,10 +73,10 @@ namespace BTTimeSkip
             s.RoomManager.SortTimeline();
         }
 
-        public static void AdvanceTo(this SimGameState s, DateTime d)
+        public static void AdvanceTo(this SimGameState s, DateTime d, bool skipNews)
         {
             int days = s.GetDayDiff(d);
-            s.AdvanceBy(days);
+            s.AdvanceBy(days, skipNews);
         }
 
         public static int GetDayDiff(this SimGameState s, DateTime d)

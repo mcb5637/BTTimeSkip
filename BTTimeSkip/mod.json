@@ -7,7 +7,7 @@
   "Website": "https://github.com/mcb5637/BTTimeSkip",
   "Version": "0.3.0",
 
-  "OptionallyDependsOn": [ "Timeline" ],
+  "DependsOn": [ "Timeline" ],
 
   "DLL": "BTTimeSkip.dll",
 
